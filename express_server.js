@@ -14,13 +14,12 @@ const urlDatabase = {
 
 function generateRandomString() {
   chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  randomString = '';
+  randomChars = [];
 
   for (let i = 0; i < 6; i++) {
-    randomString.push(chars[Math.floor(Math.random() * chars.length)])
+    randomChars.push(chars[Math.floor(Math.random() * chars.length)]);
   }
-
-  return randomString;
+  return randomChars.join('');
 }
 
 app.get("/", (req, res) => {
@@ -32,8 +31,15 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// POST request for new URL
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
+  
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+
+  console.log('updated:', urlDatabase);
+  
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
