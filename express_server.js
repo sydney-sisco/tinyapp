@@ -41,10 +41,16 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
 
-  // console.log('updated:', urlDatabase);
+  res.redirect(`/urls/${shortURL}`);
+});
+
+// Add a POST route that removes a URL resource: POST /urls/:shortURL/delete
+app.post("/urls/:shortURL/delete", (req, res) => {
+  console.log(req.body);  // Log the POST request body to the console
   
-  // res.send("Ok");         // Respond with 'Ok' (we will replace this)
-  res.redirect(`/urls/${shortURL}`)
+  delete urlDatabase[req.params.shortURL];
+
+  res.redirect(`/urls`);
 });
 
 app.get("/urls/new", (req, res) => {
