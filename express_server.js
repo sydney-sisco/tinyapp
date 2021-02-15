@@ -7,23 +7,25 @@ app.set("view engine", "ejs");
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
+// add morgan for logging
 const morgan = require('morgan');
-app.use(morgan('dev'))
+app.use(morgan('dev'));
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
-function generateRandomString() {
-  chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  randomChars = [];
+// returns a random string of 6 characters
+const generateRandomString = () => {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const randomChars = [];
 
   for (let i = 0; i < 6; i++) {
     randomChars.push(chars[Math.floor(Math.random() * chars.length)]);
   }
   return randomChars.join('');
-}
+};
 
 app.get("/", (req, res) => {
   res.send("Hello!");
