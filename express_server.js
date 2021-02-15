@@ -11,6 +11,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 const morgan = require('morgan');
 app.use(morgan('dev'));
 
+var cookieParser = require('cookie-parser')
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -29,6 +31,12 @@ const generateRandomString = () => {
 
 app.get("/", (req, res) => {
   res.send("Hello!");
+});
+
+app.post('/login', (req, res) => {
+  res.cookie('username', req.body.username);
+
+  res.redirect('/urls');
 });
 
 app.get("/urls", (req, res) => {
