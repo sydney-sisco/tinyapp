@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 const morgan = require('morgan');
 app.use(morgan('dev'));
 
-var cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 const urlDatabase = {
