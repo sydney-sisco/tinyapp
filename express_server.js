@@ -44,7 +44,16 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-// Add a POST route that removes a URL resource: POST /urls/:shortURL/delete
+// Add a POST route that edits a URL resource
+app.post("/urls/:shortURL", (req, res) => {
+  console.log(req.body);
+
+  urlDatabase[req.params.shortURL] = req.body.longURL;
+  
+  res.redirect(`/urls`);
+});
+
+// Add a POST route that removes a URL resource
 app.post("/urls/:shortURL/delete", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
   
