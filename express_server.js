@@ -12,6 +12,7 @@ const morgan = require('morgan');
 app.use(morgan('dev'));
 
 const cookieParser = require('cookie-parser');
+const { response } = require("express");
 app.use(cookieParser());
 
 const urlDatabase = {
@@ -30,7 +31,7 @@ const users = {
     email: "user2@example.com", 
     password: "dishwasher-funk"
   }
-}
+};
 
 // returns a random string of 6 characters
 const generateRandomString = () => {
@@ -48,6 +49,8 @@ app.get("/", (req, res) => {
 });
 
 app.get('/register', (req, res) => {
+  console.log('users', users);
+
   const templateVars = {
     user: users[req.cookies['user_id']],
     urls: urlDatabase
@@ -56,38 +59,56 @@ app.get('/register', (req, res) => {
   res.render('register', templateVars);
 });
 
-app.post('/register', (req, res) => {
-  const newUserID = generateRandomString();
+const isValidRegistration = (email, password) => {
+  // check if email or password are missing
+  if(!email || !password) {
+    return false;
+  } 
 
-  users[newUserID] = {
-    id: newUserID,
-    email: req.body.email,
-    password: req.body.password
+  // check if email is already in use
+  console.log('email:', email);
+  for (user in users) {
+    console.log('user obj:', users[user].email);
+    if (users[user].email === email) {
+      console.log('returning false')
+      return false;
+    }
   }
 
-  console.log('users:', users);
+  // if we get here, all is good
+  return true;
+};
 
-  res.cookie('user_id', newUserID);
+app.post('/register', (req, res) => {
+  // console.log('body:', req.body);
 
-  res.redirect('/urls');
+  if (isValidRegistration(req.body.email, req.body.password)) {
+    const newUserID = generateRandomString();
+  
+    users[newUserID] = {
+      id: newUserID,
+      email: req.body.email,
+      password: req.body.password
+    };
+  
+    res.cookie('user_id', newUserID);
+    res.redirect('/urls');
+  } else {
+    res.redirect(400, '/register');
+  }
 });
 
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
-
   res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
-  
+  res.clearCookie('user_id');
   res.redirect('/urls');
 });
 
 app.get("/urls", (req, res) => {
-
-  console.log('cookies:', req.cookies['username']);
-
   const templateVars = {
     user: users[req.cookies['user_id']],
     urls: urlDatabase
