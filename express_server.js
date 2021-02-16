@@ -170,13 +170,26 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect(`/urls`);
 });
 
-app.get("/urls/new", (req, res) => {
-  const templateVars = {
-    user: users[req.cookies['user_id']],
-    urls: urlDatabase
-  };
+const findUserByID = (userID) => {
+  if (users[userID]) {
+    return users[userID]
+  } else {
+    return null;
+  }
+};
 
-  res.render("urls_new", templateVars);
+app.get("/urls/new", (req, res) => {
+  const user = findUserByID(req.cookies.user_id);
+
+  if (user) {
+    const templateVars = {
+      user: users[req.cookies['user_id']],
+      urls: urlDatabase
+    };
+    res.render("urls_new", templateVars);
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get("/urls/:shortURL", (req, res) => {
