@@ -66,11 +66,8 @@ const isValidRegistration = (email, password) => {
   } 
 
   // check if email is already in use
-  console.log('email:', email);
   for (user in users) {
-    console.log('user obj:', users[user].email);
     if (users[user].email === email) {
-      console.log('returning false')
       return false;
     }
   }
@@ -107,9 +104,28 @@ app.get('/login', (req, res) => {
   res.render("login", templateVars);
 });
 
+const findUserByEmail = (email) => {
+  for (user in users) {
+    if (users[user].email === email) {
+      return users[user];
+    }
+  }
+  return null;
+};
+
 app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect('/urls');
+  const user = findUserByEmail(req.body.email);
+
+  if(!req.body.email || !req.body.password || !user) {
+    res.redirect(403, '/login');
+  } else {
+    if (req.body.password === user.password) {
+      res.cookie('user_id', user.id);
+      res.redirect('/urls');
+    } else {
+      res.redirect(403, '/login');
+    }
+  }
 });
 
 app.post('/logout', (req, res) => {
@@ -175,6 +191,10 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
+});
+
+app.get("/users.json", (req, res) => {
+  res.json(users);
 });
 
 app.get("/u/:shortURL", (req, res) => {
