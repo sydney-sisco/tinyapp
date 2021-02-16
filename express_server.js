@@ -15,14 +15,19 @@ const cookieParser = require('cookie-parser');
 const { response } = require("express");
 app.use(cookieParser());
 
+// const urlDatabase = {
+//   "b2xVn2": "http://www.lighthouselabs.ca",
+//   "9sm5xK": "http://www.google.com"
+// };
+
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: { longURL: "http://www.lighthouselabs.ca", userID: "aJ48lW" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
 const users = { 
-  "userRandomID": {
-    id: "userRandomID", 
+  "aJ48lW": {
+    id: "aJ48lW", 
     email: "user@example.com", 
     password: "purple-monkey-dinosaur"
   },
@@ -142,14 +147,29 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+const isValidUser = (userID) => {
+  for (user in users) {
+    if (users[userID]) {
+      return true;
+    }
+  }
+  return false;
+};
+
 // POST request for new URL
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
-  
-  const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
 
-  res.redirect(`/urls/${shortURL}`);
+  if (req.cookies['user_id'] && isValidUser(req.cookies['user_id'])) {
+    const shortURL = generateRandomString();
+    urlDatabase[shortURL] = {
+      longURL: req.body.longURL,
+      userID: req.cookies['user_id']
+    };
+    res.redirect(`/urls/${shortURL}`);
+  } else {
+    res.redirect('403', '/login');
+  }
 });
 
 // Add a POST route that edits a URL resource
@@ -196,7 +216,7 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     user: users[req.cookies['user_id']],
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
+    longURL: urlDatabase[req.params.shortURL].longURL,
   };
 
   res.render("urls_show", templateVars);
