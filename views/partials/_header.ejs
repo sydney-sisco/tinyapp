@@ -17,13 +17,13 @@
           <button type="submit" class="btn btn-outline-dark" style="margin-left: 1em">Logout</button>
         </div>
       </form>
-    <% } else { %>  
-      <form class="form-inline" action="/login" method="POST">
-        <div class="form-group">
-          <input class="form-control" type="text" name="username" placeholder="Username" style="width: 150px; margin: 1em">
-          <button type="submit" class="btn btn-outline-dark">Login</button>
+      <% } else { %>  
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-item nav-link" href="/register">Register</a>
+            <a class="nav-item nav-link" href="/login">Login</a>
+          </div>
         </div>
-      </form>
       <% } %>
   </nav>
 </header>
