@@ -138,7 +138,7 @@ app.post('/login', (req, res) => {
   if(!req.body.email || !req.body.password || !user) {
     res.redirect(403, '/login');
   } else {
-    if (req.body.password === user.password) {
+    if (bcrypt.compareSync(req.body.password, user.password)) {
       res.cookie('user_id', user.id);
       res.redirect('/urls');
     } else {
@@ -213,8 +213,11 @@ const urlBelongsToUser = (userID, shortURL) => {
 app.post("/urls/:shortURL", (req, res) => {
   console.log(req.body);
 
-  if (req.cookies['user_id'] && isValidUser(req.cookies['user_id']) && urlBelongsToUser(eq.cookies['user_id'], req.params.shortURL)) {
-    urlDatabase[req.params.shortURL] = req.body.longURL;
+  if (req.cookies['user_id'] && isValidUser(req.cookies['user_id']) && urlBelongsToUser(req.cookies['user_id'], req.params.shortURL)) {
+    urlDatabase[req.params.shortURL] = {
+      longURL: req.body.longURL,
+      userID: req.cookies['user_id']
+    };
     res.redirect(`/urls`);
   } else {
     res.redirect(403, '/login');
@@ -225,7 +228,7 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   console.log(req.body);
 
-  if (req.cookies['user_id'] && isValidUser(req.cookies['user_id']) && urlBelongsToUser(eq.cookies['user_id'], req.params.shortURL)) {
+  if (req.cookies['user_id'] && isValidUser(req.cookies['user_id']) && urlBelongsToUser(req.cookies['user_id'], req.params.shortURL)) {
     delete urlDatabase[req.params.shortURL];
     res.redirect(`/urls`);
   } else {
