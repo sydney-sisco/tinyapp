@@ -117,17 +117,17 @@ app.get('/login', (req, res) => {
   res.render("login", templateVars);
 });
 
-const findUserByEmail = (email) => {
-  for (user in users) {
-    if (users[user].email === email) {
-      return users[user];
+const getUserByEmail = function(email, database) {
+  for (user in database) {
+    if (database[user].email === email) {
+      return database[user];
     }
   }
   return null;
 };
 
 app.post('/login', (req, res) => {
-  const user = findUserByEmail(req.body.email);
+  const user = getUserByEmail(req.body.email, users);
 
   if(!req.body.email || !req.body.password || !user) {
     res.redirect(403, '/login');
