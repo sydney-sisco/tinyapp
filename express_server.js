@@ -17,28 +17,10 @@ app.use(cookieParser());
 
 const bcrypt = require('bcrypt');
 
-// const urlDatabase = {
-//   "b2xVn2": "http://www.lighthouselabs.ca",
-//   "9sm5xK": "http://www.google.com"
-// };
-
 const urlDatabase = {
   b6UTxQ: { longURL: "http://www.lighthouselabs.ca", userID: "aJ48lW" },
   i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
-
-// const users = {
-//   "aJ48lW": {
-//     id: "aJ48lW",
-//     email: "user@example.com",
-//     password: "purple-monkey-dinosaur"
-//   },
-//  "user2RandomID": {
-//     id: "user2RandomID",
-//     email: "user2@example.com",
-//     password: "dishwasher-funk"
-//   }
-// };
 
 const users = { 
   "aJ48lW": {
@@ -265,7 +247,6 @@ app.get("/urls/:shortURL", (req, res) => {
     user: users[req.cookies['user_id']],
     shortURL: req.params.shortURL,
     url: urls[req.params.shortURL],
-    // longURL: urls[req.params.shortURL].longURL
   };
 
   res.render("urls_show", templateVars);
