@@ -70,27 +70,9 @@ app.get('/register', (req, res) => {
   res.render('register', templateVars);
 });
 
-const isValidRegistration = (email, password) => {
-  // check if email or password are missing
-  if(!email || !password) {
-    return false;
-  } 
-
-  // check if email is already in use
-  for (user in users) {
-    if (users[user].email === email) {
-      return false;
-    }
-  }
-
-  // if we get here, all is good
-  return true;
-};
-
 app.post('/register', (req, res) => {
-  // console.log('body:', req.body);
 
-  if (isValidRegistration(req.body.email, req.body.password)) {
+  if (req.body.email && req.body.password && !getUserByEmail(req.body.email, users)) {
     const newUserID = generateRandomString();
   
     users[newUserID] = {
@@ -99,7 +81,6 @@ app.post('/register', (req, res) => {
       password: bcrypt.hashSync(req.body.password, 10)
     };
   
-    // res.cookie('user_id', newUserID);
     req.session.user_id = newUserID;
     res.redirect('/urls');
   } else {
