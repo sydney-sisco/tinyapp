@@ -58,7 +58,6 @@ app.get('/register', (req, res) => {
 
   const templateVars = {
     user: users[req.cookies['user_id']],
-    urls: urlDatabase
   };
 
   res.render('register', templateVars);
@@ -184,22 +183,39 @@ app.post("/urls", (req, res) => {
   }
 });
 
+const urlBelongsToUser = (userID, shortURL) => {
+  const urls = urlsForUser(userID);
+
+  for (const url in urls) {
+    if (url === shortURL) {
+      return true;
+    }
+  }
+  return false;
+};
+
 // Add a POST route that edits a URL resource
 app.post("/urls/:shortURL", (req, res) => {
   console.log(req.body);
 
-  urlDatabase[req.params.shortURL] = req.body.longURL;
-  
-  res.redirect(`/urls`);
+  if (req.cookies['user_id'] && isValidUser(req.cookies['user_id']) && urlBelongsToUser(eq.cookies['user_id'], req.params.shortURL)) {
+    urlDatabase[req.params.shortURL] = req.body.longURL;
+    res.redirect(`/urls`);
+  } else {
+    res.redirect(403, '/login');
+  }
 });
 
 // Add a POST route that removes a URL resource
 app.post("/urls/:shortURL/delete", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  
-  delete urlDatabase[req.params.shortURL];
+  console.log(req.body);
 
-  res.redirect(`/urls`);
+  if (req.cookies['user_id'] && isValidUser(req.cookies['user_id']) && urlBelongsToUser(eq.cookies['user_id'], req.params.shortURL)) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect(`/urls`);
+  } else {
+    res.redirect(403, '/login');
+  }
 });
 
 const findUserByID = (userID) => {
