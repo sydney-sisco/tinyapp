@@ -138,10 +138,22 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls');
 });
 
+
+const urlsForUser = (userID) => {
+  const userURLs = {};
+  for (url in urlDatabase) {
+    if (urlDatabase[url].userID === userID) {
+      userURLs[url] = urlDatabase[url];
+    }
+  }
+  console.log(userURLs);
+  return userURLs;
+};
+
 app.get("/urls", (req, res) => {
   const templateVars = {
     user: users[req.cookies['user_id']],
-    urls: urlDatabase
+    urls: urlsForUser(req.cookies['user_id'])
   };
 
   res.render("urls_index", templateVars);
@@ -213,10 +225,13 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  const urls = urlsForUser(req.cookies['user_id']);
+  
   const templateVars = {
     user: users[req.cookies['user_id']],
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
+    url: urls[req.params.shortURL],
+    // longURL: urls[req.params.shortURL].longURL
   };
 
   res.render("urls_show", templateVars);

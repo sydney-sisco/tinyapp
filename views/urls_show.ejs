@@ -11,18 +11,24 @@
   <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
-        <h5 class="card-title">TinyURL for: <%= longURL %></h5>
+        <% if (url) {%>
+        <h5 class="card-title">TinyURL for: <%= url.longURL %></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
+        <% } else { %>
+          <p class="card-text">You do not have access to this URL. Try <a href="/login">logging in</a>?</p>
+        <% } %>
       </div>
     <div class="card-footer text-muted">
+      <% if (url) {%>
       <h3>Edit</h3>
       <form class="form-inline" action="/urls/<%= shortURL %>" method="POST">
         <div class="form-group">
           <label for="longURL">New URL:</label>
-          <input class="form-control" type="text" name="longURL" placeholder="<%= longURL %>" style="width: 300px; margin: 1em">
+          <input class="form-control" type="text" name="longURL" placeholder="<%= url.longURL %>" style="width: 300px; margin: 1em">
           <button type="submit" class="btn btn-primary">Submit</button>
         </div>
       </form>
+      <% } %>
     </div>
   </div>
   <!-- Bootstrap JS -->
