@@ -15,6 +15,8 @@ const cookieParser = require('cookie-parser');
 const { response } = require("express");
 app.use(cookieParser());
 
+const bcrypt = require('bcrypt');
+
 // const urlDatabase = {
 //   "b2xVn2": "http://www.lighthouselabs.ca",
 //   "9sm5xK": "http://www.google.com"
@@ -25,16 +27,29 @@ const urlDatabase = {
   i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
+// const users = {
+//   "aJ48lW": {
+//     id: "aJ48lW",
+//     email: "user@example.com",
+//     password: "purple-monkey-dinosaur"
+//   },
+//  "user2RandomID": {
+//     id: "user2RandomID",
+//     email: "user2@example.com",
+//     password: "dishwasher-funk"
+//   }
+// };
+
 const users = { 
   "aJ48lW": {
-    id: "aJ48lW", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    id: "aJ48lW",
+    email: "user@example.com",
+    password: "$2b$10$xFpTYaj3A.VQZeqUZUFqzuevvkLzg3TUkhUlfNUA06rR4UaaMyUxy"
   },
  "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "$2b$10$HE5CVyoxvPaO.YrHXpVPFO.vf7gV6QDGn0ZKoN8zGVLoVfhpQmFw."
   }
 };
 
@@ -89,7 +104,7 @@ app.post('/register', (req, res) => {
     users[newUserID] = {
       id: newUserID,
       email: req.body.email,
-      password: req.body.password
+      password: bcrypt.hashSync(req.body.password, 10)
     };
   
     res.cookie('user_id', newUserID);
