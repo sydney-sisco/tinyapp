@@ -26,6 +26,8 @@ app.use(cookieSession({
 
 const bcrypt = require('bcrypt');
 
+const { getUserByEmail } = require('./helpers');
+
 const urlDatabase = {
   b6UTxQ: { longURL: "http://www.lighthouselabs.ca", userID: "aJ48lW" },
   i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
@@ -97,15 +99,6 @@ app.get('/login', (req, res) => {
 
   res.render("login", templateVars);
 });
-
-const getUserByEmail = function(email, database) {
-  for (user in database) {
-    if (database[user].email === email) {
-      return database[user];
-    }
-  }
-  return null;
-};
 
 app.post('/login', (req, res) => {
   const user = getUserByEmail(req.body.email, users);
