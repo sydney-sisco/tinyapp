@@ -190,8 +190,9 @@ app.post("/urls", (req, res) => {
   } else {
     const templateVars = {
       user: users[req.session.user_id],
+      errorString: 'Sorry, you do not have access to this.'
     };
-    res.render('error_403', templateVars);
+    res.status(403).render('error', templateVars);
   }
 });
 
@@ -221,8 +222,9 @@ app.post("/urls/:shortURL", (req, res) => {
   } else {
     const templateVars = {
       user: users[req.session.user_id],
+      errorString: 'Sorry, you do not have access to this.'
     };
-    res.render('error_403', templateVars);
+    res.status(403).render('error', templateVars);
   }
 });
 
