@@ -87,45 +87,64 @@ app.post('/register', (req, res) => {
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 10)
   };
-
   req.session.user_id = newUserID;
   res.redirect('/urls');
 });
 
+// Login GET
 app.get('/login', (req, res) => {
+
+  // if the user is already logged in, redirect them
   if (req.session.user_id) {
     res.redirect('/urls');
-  } else {
-    const templateVars = {
-      user: users[req.session.user_id],
-      urls: urlDatabase
-    };
-  
-    res.render("login", templateVars);
+    return;
   }
+
+  const templateVars = {
+    user: users[req.session.user_id],
+  };
+  res.render("login", templateVars);
 });
 
+// Login POST
 app.post('/login', (req, res) => {
-  const user = getUserByEmail(req.body.email, users);
 
-  if (!req.body.email || !req.body.password || !user) {
+  // if email or password are missing, show error
+  if (!req.body.email || !req.body.password) {
     const templateVars = {
       user: users[req.session.user_id],
-      errorString: 'Login failed, try again.'
+      errorString: 'You must provide an email and password to login.'
     };
     res.status(403).render('error', templateVars);
-  } else {
-    if (bcrypt.compareSync(req.body.password, user.password)) {
-      req.session.user_id = user.id;
-      res.redirect('/urls');
-    } else {
-      const templateVars = {
-        user: users[req.session.user_id],
-        errorString: 'Login failed, try again.'
-      };
-      res.status(403).render('error', templateVars);
-    }
+    return;
   }
+
+  // look up the user in the database. Returns null if no user found
+  const user = getUserByEmail(req.body.email, users);
+
+  // if the email is incorrect, show error
+  if (!user) {
+    const templateVars = {
+      user: users[req.session.user_id],
+      errorString: 'Invalid username or password.'
+    };
+    res.status(403).render('error', templateVars);
+    return;
+  }
+  
+  // if the password is incorrect, show error
+  if (!bcrypt.compareSync(req.body.password, user.password)) {
+    const templateVars = {
+      user: users[req.session.user_id],
+      errorString: 'Invalid username or password.'
+    };
+    res.status(403).render('error', templateVars);
+    return;
+  }
+  
+  // log the user in and redirect them
+  req.session.user_id = user.id;
+  res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
