@@ -267,8 +267,13 @@ app.get("/users.json", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
+  if (urlDatabase[req.params.shortURL]) {
+    const longURL = urlDatabase[req.params.shortURL].longURL;
+    res.redirect(longURL);
+  } else {
+    templateVars = {user: users[req.session.user_id]};
+    res.render('error', templateVars);
+  }
 });
 
 app.listen(PORT, () => {
