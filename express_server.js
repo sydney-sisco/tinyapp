@@ -124,14 +124,22 @@ app.post('/login', (req, res) => {
   const user = getUserByEmail(req.body.email, users);
 
   if(!req.body.email || !req.body.password || !user) {
-    res.redirect(403, '/login');
+    templateVars = {
+      user: users[req.session.user_id],
+      errorString: 'Login failed, try again.'
+    }
+    res.status(403).render('error', templateVars);
   } else {
     if (bcrypt.compareSync(req.body.password, user.password)) {
       // res.cookie('user_id', user.id);
       req.session.user_id = user.id;
       res.redirect('/urls');
     } else {
-      res.redirect(403, '/login');
+      templateVars = {
+        user: users[req.session.user_id],
+        errorString: 'Login failed, try again.'
+      }
+      res.status(403).render('error', templateVars);
     }
   }
 });
