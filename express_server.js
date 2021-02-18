@@ -51,7 +51,7 @@ app.get('/register', (req, res) => {
     return;
   }
 
-  // otherwise, those them the register page
+  // otherwise, show them the register page
   const templateVars = {
     user: users[req.session.user_id],
   };
@@ -60,32 +60,39 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
 
-  if (req.body.email && req.body.password && !getUserByEmail(req.body.email, users)) {
-    const newUserID = generateRandomString();
-  
-    users[newUserID] = {
-      id: newUserID,
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password, 10)
-    };
-  
-    req.session.user_id = newUserID;
-    res.redirect('/urls');
-  } else if (!req.body.email || !req.body.password) {
+  // if email or password are missing, show error
+  if (!req.body.email || !req.body.password) {
     const templateVars = {
       user: users[req.session.user_id],
       urls: urlDatabase,
       errorString: 'You must provide an email and password to register.'
     };
     res.status(400).render('error', templateVars);
-  } else {
+    return;
+  }
+
+  // if email is already in use, show error
+  if (getUserByEmail(req.body.email, users)) {
     const templateVars = {
       user: users[req.session.user_id],
       urls: urlDatabase,
       errorString: 'Email is already in use.'
     };
     res.status(400).render('error', templateVars);
+    return;
   }
+
+  // register the user and log them in
+  const newUserID = generateRandomString();
+  
+  users[newUserID] = {
+    id: newUserID,
+    email: req.body.email,
+    password: bcrypt.hashSync(req.body.password, 10)
+  };
+
+  req.session.user_id = newUserID;
+  res.redirect('/urls');
 });
 
 app.get('/login', (req, res) => {
