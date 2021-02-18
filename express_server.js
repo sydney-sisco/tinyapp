@@ -58,7 +58,12 @@ const generateRandomString = () => {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  // res.send("Hello!");
+  if (isValidUser(req.session.user_id)) {
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/register', (req, res) => {
@@ -251,10 +256,12 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// TODO: remove this
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+// TODO: remove this
 app.get("/users.json", (req, res) => {
   res.json(users);
 });
@@ -262,10 +269,6 @@ app.get("/users.json", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 app.listen(PORT, () => {
