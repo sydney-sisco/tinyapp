@@ -173,7 +173,10 @@ app.post("/urls", (req, res) => {
     };
     res.redirect(`/urls/${shortURL}`);
   } else {
-    res.render('error_403');
+    const templateVars = {
+      user: users[req.session.user_id],
+    };
+    res.render('error_403', templateVars);
   }
 });
 
@@ -201,7 +204,10 @@ app.post("/urls/:shortURL", (req, res) => {
     };
     res.redirect(`/urls`);
   } else {
-    res.redirect(403, '/login');
+    const templateVars = {
+      user: users[req.session.user_id],
+    };
+    res.render('error_403', templateVars);
   }
 });
 
@@ -214,7 +220,10 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[req.params.shortURL];
     res.redirect(`/urls`);
   } else {
-    res.redirect(403, '/login');
+    const templateVars = {
+      user: users[req.session.user_id],
+    };
+    res.render('error_403', templateVars);
   }
 });
 
