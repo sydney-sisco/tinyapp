@@ -96,13 +96,16 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  const templateVars = {
-    // user: users[req.cookies['user_id']],
-    user: users[req.session.user_id],
-    urls: urlDatabase
-  };
-
-  res.render("login", templateVars);
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    const templateVars = {
+      user: users[req.session.user_id],
+      urls: urlDatabase
+    };
+  
+    res.render("login", templateVars);
+  }
 });
 
 app.post('/login', (req, res) => {
