@@ -14,8 +14,10 @@
         <% if (url) {%>
         <h5 class="card-title">TinyURL for: <%= url.longURL %></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
+        <% } else if (user) { %>
+          <p class="card-text">Sorry, you do not have access to this URL. Return to <a href="/urls">my URLs</a>.</p>
         <% } else { %>
-          <p class="card-text">You do not have access to this URL. Try <a href="/login">logging in</a>?</p>
+          <p class="card-text">Error retrieving this URL. Try <a href="/login">logging in</a>?</p>
         <% } %>
       </div>
     <div class="card-footer text-muted">
