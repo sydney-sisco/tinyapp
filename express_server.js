@@ -90,8 +90,20 @@ app.post('/register', (req, res) => {
   
     req.session.user_id = newUserID;
     res.redirect('/urls');
+  } else if (!req.body.email || !req.body.password) {
+    const templateVars = {
+      user: users[req.session.user_id],
+      urls: urlDatabase,
+      errorString: 'You must provide an email and password to register.'
+    };
+    res.status(400).render('error', templateVars);
   } else {
-    res.redirect(400, '/register');
+    const templateVars = {
+      user: users[req.session.user_id],
+      urls: urlDatabase,
+      errorString: 'Email is already in use.'
+    };
+    res.status(400).render('error', templateVars);
   }
 });
 
