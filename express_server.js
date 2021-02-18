@@ -33,16 +33,14 @@ const users = {};
 
 // requests to root should be redirected
 app.get("/", (req, res) => {
-  if (isValidUser(req.session.user_id)) {
-    res.redirect('/urls');
-  } else {
+  if (!isValidUser(req.session.user_id)) {
     res.redirect('/login');
+    return;
   }
+  res.redirect('/urls');
 });
 
-//
-/// Register page
-//
+// Register GET
 app.get('/register', (req, res) => {
   
   // if the user is already logged in, redirect them
@@ -58,13 +56,13 @@ app.get('/register', (req, res) => {
   res.render('register', templateVars);
 });
 
+// Register POST
 app.post('/register', (req, res) => {
 
   // if email or password are missing, show error
   if (!req.body.email || !req.body.password) {
     const templateVars = {
       user: users[req.session.user_id],
-      urls: urlDatabase,
       errorString: 'You must provide an email and password to register.'
     };
     res.status(400).render('error', templateVars);
@@ -75,7 +73,6 @@ app.post('/register', (req, res) => {
   if (getUserByEmail(req.body.email, users)) {
     const templateVars = {
       user: users[req.session.user_id],
-      urls: urlDatabase,
       errorString: 'Email is already in use.'
     };
     res.status(400).render('error', templateVars);
