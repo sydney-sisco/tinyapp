@@ -239,8 +239,9 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   } else {
     const templateVars = {
       user: users[req.session.user_id],
+      errorString: 'Sorry you do not have access to this.'
     };
-    res.render('error_403', templateVars);
+    res.render('error', templateVars);
   }
 });
 
