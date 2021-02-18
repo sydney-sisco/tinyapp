@@ -173,7 +173,7 @@ app.post("/urls", (req, res) => {
     };
     res.redirect(`/urls/${shortURL}`);
   } else {
-    res.redirect('403', '/login');
+    res.render('error_403');
   }
 });
 
@@ -272,7 +272,7 @@ app.get("/u/:shortURL", (req, res) => {
     res.redirect(longURL);
   } else {
     templateVars = {user: users[req.session.user_id]};
-    res.render('error', templateVars);
+    res.render('error_404', templateVars);
   }
 });
 
