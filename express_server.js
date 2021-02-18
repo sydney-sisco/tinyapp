@@ -67,14 +67,14 @@ app.get("/", (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  console.log('users', users);
-
-  const templateVars = {
-    // user: users[req.cookies['user_id']],
-    user: users[req.session.user_id],
-  };
-
-  res.render('register', templateVars);
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    const templateVars = {
+      user: users[req.session.user_id],
+    };
+    res.render('register', templateVars);
+  }
 });
 
 app.post('/register', (req, res) => {
