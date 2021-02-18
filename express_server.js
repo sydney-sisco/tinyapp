@@ -24,22 +24,11 @@ app.use(cookieSession({
 // use bcrypt to hash passwords
 const bcrypt = require('bcrypt');
 
-const { getUserByEmail } = require('./helpers');
+const { getUserByEmail, generateRandomString } = require('./helpers');
 
 // database objects
 const urlDatabase = {};
 const users = {};
-
-// returns a random string of 6 characters
-const generateRandomString = () => {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  const randomChars = [];
-
-  for (let i = 0; i < 6; i++) {
-    randomChars.push(chars[Math.floor(Math.random() * chars.length)]);
-  }
-  return randomChars.join('');
-};
 
 app.get("/", (req, res) => {
   if (isValidUser(req.session.user_id)) {
