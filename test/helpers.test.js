@@ -1,6 +1,6 @@
 const { assert } = require('chai');
 
-const { getUserByEmail } = require('../helpers.js');
+const { getUserByEmail, generateRandomString } = require('../helpers.js');
 
 const testUsers = {
   'userRandomID': {
@@ -15,7 +15,7 @@ const testUsers = {
   }
 };
 
-describe('getUserByEmail', function() {
+describe('getUserByEmail', () => {
   it('should return a user with valid email', () => {
     const user = getUserByEmail('user@example.com', testUsers);
     const expectedOutput = 'userRandomID';
@@ -27,5 +27,20 @@ describe('getUserByEmail', function() {
     const user = getUserByEmail('doesnotexist@fake.com', testUsers);
     
     assert.isNull(user);
+  });
+});
+
+describe('generateRandomString', () => {
+  it('should return a random string', () => {
+    const string1 = generateRandomString();
+    const string2 = generateRandomString();
+
+    assert.notEqual(string1, string2);
+  });
+
+  it('should return a string of length 6', () => {
+    const string = generateRandomString();
+
+    assert.equal(string.length, 6);
   });
 });
