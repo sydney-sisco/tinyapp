@@ -284,7 +284,7 @@ app.get("/u/:shortURL", (req, res) => {
     res.redirect(longURL);
   } else {
     templateVars = {user: users[req.session.user_id]};
-    res.render('error_404', templateVars);
+    res.status(404).render('error_404', templateVars);
   }
 });
 
