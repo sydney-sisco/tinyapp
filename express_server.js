@@ -15,36 +15,22 @@ app.use(morgan('dev'));
 // const { response } = require("express");
 // app.use(cookieParser());
 
-var cookieSession = require('cookie-session')
+const cookieSession = require('cookie-session');
 app.use(cookieSession({
   name: 'session',
   keys: ['zO2xF2xzitMI8rtGgAPQ'],
 
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
-}))
+}));
 
 const bcrypt = require('bcrypt');
 
 const { getUserByEmail } = require('./helpers');
 
-const urlDatabase = {
-  b6UTxQ: { longURL: "http://www.lighthouselabs.ca", userID: "aJ48lW" },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
-};
-
-const users = { 
-  "aJ48lW": {
-    id: "aJ48lW",
-    email: "user@example.com",
-    password: "$2b$10$xFpTYaj3A.VQZeqUZUFqzuevvkLzg3TUkhUlfNUA06rR4UaaMyUxy"
-  },
- "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "$2b$10$HE5CVyoxvPaO.YrHXpVPFO.vf7gV6QDGn0ZKoN8zGVLoVfhpQmFw."
-  }
-};
+// database objects
+const urlDatabase = {};
+const users = {};
 
 // returns a random string of 6 characters
 const generateRandomString = () => {
@@ -123,11 +109,11 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const user = getUserByEmail(req.body.email, users);
 
-  if(!req.body.email || !req.body.password || !user) {
-    templateVars = {
+  if (!req.body.email || !req.body.password || !user) {
+    const templateVars = {
       user: users[req.session.user_id],
       errorString: 'Login failed, try again.'
-    }
+    };
     res.status(403).render('error', templateVars);
   } else {
     if (bcrypt.compareSync(req.body.password, user.password)) {
@@ -135,10 +121,10 @@ app.post('/login', (req, res) => {
       req.session.user_id = user.id;
       res.redirect('/urls');
     } else {
-      templateVars = {
+      const templateVars = {
         user: users[req.session.user_id],
         errorString: 'Login failed, try again.'
-      }
+      };
       res.status(403).render('error', templateVars);
     }
   }
@@ -153,7 +139,7 @@ app.post('/logout', (req, res) => {
 
 const urlsForUser = (userID) => {
   const userURLs = {};
-  for (url in urlDatabase) {
+  for (const url in urlDatabase) {
     if (urlDatabase[url].userID === userID) {
       userURLs[url] = urlDatabase[url];
     }
@@ -174,7 +160,7 @@ app.get("/urls", (req, res) => {
 });
 
 const isValidUser = (userID) => {
-  for (user in users) {
+  for (const user in users) {
     if (users[userID]) {
       return true;
     }
@@ -255,7 +241,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 const findUserByID = (userID) => {
   if (users[userID]) {
-    return users[userID]
+    return users[userID];
   } else {
     return null;
   }
@@ -306,7 +292,9 @@ app.get("/u/:shortURL", (req, res) => {
     const longURL = urlDatabase[req.params.shortURL].longURL;
     res.redirect(longURL);
   } else {
-    templateVars = {user: users[req.session.user_id]};
+    const templateVars = {
+      user: users[req.session.user_id]
+    };
     res.status(404).render('error_404', templateVars);
   }
 });
