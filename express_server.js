@@ -30,6 +30,8 @@ const { getUserByEmail, generateRandomString } = require('./helpers');
 const urlDatabase = {};
 const users = {};
 
+
+// requests to root should be redirected
 app.get("/", (req, res) => {
   if (isValidUser(req.session.user_id)) {
     res.redirect('/urls');
@@ -38,15 +40,22 @@ app.get("/", (req, res) => {
   }
 });
 
+//
+/// Register page
+//
 app.get('/register', (req, res) => {
+  
+  // if the user is already logged in, redirect them
   if (req.session.user_id) {
     res.redirect('/urls');
-  } else {
-    const templateVars = {
-      user: users[req.session.user_id],
-    };
-    res.render('register', templateVars);
+    return;
   }
+
+  // otherwise, those them the register page
+  const templateVars = {
+    user: users[req.session.user_id],
+  };
+  res.render('register', templateVars);
 });
 
 app.post('/register', (req, res) => {
