@@ -24,7 +24,7 @@ app.use(cookieSession({
 // use bcrypt to hash passwords
 const bcrypt = require('bcrypt');
 
-const { getUserByEmail, generateRandomString } = require('./helpers');
+const { getUserByEmail, generateRandomString, getURLsByUser } = require('./helpers');
 
 // database objects
 const urlDatabase = {};
@@ -147,26 +147,18 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
+// Logout POST
 app.post('/logout', (req, res) => {
+  // clear cookies, EZ.
   req.session = null;
   res.redirect('/urls');
 });
 
-
-const urlsForUser = (userID) => {
-  const userURLs = {};
-  for (const url in urlDatabase) {
-    if (urlDatabase[url].userID === userID) {
-      userURLs[url] = urlDatabase[url];
-    }
-  }
-  return userURLs;
-};
-
+// URLs GET - Listing of user's URLs
 app.get("/urls", (req, res) => {
   const templateVars = {
     user: users[req.session.user_id],
-    urls: urlsForUser(req.session.user_id)
+    urls: getURLsByUser(req.session.user_id, urlDatabase)
   };
 
   res.render("urls_index", templateVars);
@@ -201,7 +193,7 @@ app.post("/urls", (req, res) => {
 });
 
 const urlBelongsToUser = (userID, shortURL) => {
-  const urls = urlsForUser(userID);
+  const urls = getURLsByUser(userID, urlDatabase);
 
   for (const url in urls) {
     if (url === shortURL) {
@@ -267,7 +259,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const urls = urlsForUser(req.session.user_id);
+  const urls = getURLsByUser(req.session.user_id, urlDatabase);
   
   const templateVars = {
     user: users[req.session.user_id],
