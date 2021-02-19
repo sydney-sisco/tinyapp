@@ -156,6 +156,18 @@ app.post('/logout', (req, res) => {
 
 // URLs GET - Listing of user's URLs
 app.get("/urls", (req, res) => {
+
+  // if the user is not logged in, show error
+  if (!req.session.user_id) {
+    const templateVars = {
+      user: users[req.session.user_id],
+      errorString: 'Please log in to view your URLs.'
+    };
+    res.status(403).render('error', templateVars);
+    return;
+  }
+
+  // render the page
   const templateVars = {
     user: users[req.session.user_id],
     urls: getURLsByUser(req.session.user_id, urlDatabase)
@@ -324,8 +336,11 @@ app.get("/u/:shortURL", (req, res) => {
   }
 
   // redirect to the corresponding long URL
-  const longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
+  let longURL = urlDatabase[req.params.shortURL].longURL;
+  if (longURL.substring(0, 4) !== 'http') {
+    longURL = 'http://' + longURL;
+  }
+  res.status(302).redirect(longURL);
 });
 
 // start the server!
