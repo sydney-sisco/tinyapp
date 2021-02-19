@@ -220,7 +220,7 @@ app.post("/urls/:shortURL", (req, res) => {
   }
   
   // if the user does not own the URL, show error
-  if (!(req.params.shortURL in getURLsByUser(req.session.user_id))) {
+  if (!getURLsByUser(req.session.user_id, urlDatabase).hasOwnProperty(req.params.shortURL)) {
     const templateVars = {
       user: users[req.session.user_id],
       errorString: 'Sorry, you do not have access to this.'
@@ -229,26 +229,37 @@ app.post("/urls/:shortURL", (req, res) => {
     return;
   }
 
-  // edit the URL and redirect user
-  urlDatabase[req.params.shortURL] = {
-    longURL: req.body.longURL,
-  };
+  // edit the URL and redirect the user
+  urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   res.redirect(`/urls`);
 });
 
-// Add a POST route that removes a URL resource
+// Delete a URL
 app.post("/urls/:shortURL/delete", (req, res) => {
 
-  if (req.session.user_id && isValidUser(req.session.user_id) && urlBelongsToUser(req.session.user_id, req.params.shortURL)) {
-    delete urlDatabase[req.params.shortURL];
-    res.redirect(`/urls`);
-  } else {
+  // if the user is not logged in, show error
+  if (!req.session.user_id) {
     const templateVars = {
       user: users[req.session.user_id],
-      errorString: 'Sorry you do not have access to this.'
+      errorString: 'You must be logged in to do this.'
     };
-    res.render('error', templateVars);
+    res.status(403).render('error', templateVars);
+    return;
   }
+
+  // if the user does not own the URL, show error
+  if (!getURLsByUser(req.session.user_id, urlDatabase).hasOwnProperty(req.params.shortURL)) {
+    const templateVars = {
+      user: users[req.session.user_id],
+      errorString: 'Sorry, you do not have access to this.'
+    };
+    res.status(403).render('error', templateVars);
+    return;
+  }
+
+  // delete the URL and redirect the user
+  delete urlDatabase[req.params.shortURL];
+  res.redirect(`/urls`);
 });
 
 const findUserByID = (userID) => {
