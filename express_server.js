@@ -251,26 +251,20 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect(`/urls`);
 });
 
-const findUserByID = (userID) => {
-  if (users[userID]) {
-    return users[userID];
-  } else {
-    return null;
-  }
-};
-
+// form to create a new URL
 app.get("/urls/new", (req, res) => {
-  const user = findUserByID(req.session.user_id);
 
-  if (user) {
-    const templateVars = {
-      user: users[req.session.user_id],
-      urls: urlDatabase
-    };
-    res.render("urls_new", templateVars);
-  } else {
+  // if the user is not logged in, redirect to login
+  if (!req.session.user_id) {
     res.redirect('/login');
+    return;
   }
+
+  const templateVars = {
+    user: users[req.session.user_id],
+    urls: urlDatabase
+  };
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
