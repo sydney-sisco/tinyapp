@@ -1,6 +1,6 @@
 const { assert } = require('chai');
 
-const { getUserByEmail, generateRandomString, getURLsByUser } = require('../helpers.js');
+const { getUserByEmail, generateRandomString, getURLsByUser, countUniqueVisitors } = require('../helpers.js');
 
 const testUsers = {
   'EoPVvj': {
@@ -22,7 +22,12 @@ const testURLs = {
   },
   "i3BoGr":{
     "longURL":"https://www.google.ca",
-    "userID":"aJ48lW"
+    "userID":"aJ48lW",
+    visits: [
+      {visitorID: 'yzVskB'},
+      {visitorID: 'mlPWyG'},
+      {visitorID: 'yzVskB'}
+    ]
   }
 };
 
@@ -73,5 +78,14 @@ describe('getURLsByUser', () => {
     const urls = getURLsByUser('tEP8X1', testURLs);
 
     assert.deepEqual(urls, {});
+  });
+});
+
+describe('countUniqueVisitors', () => {
+  it('should only count each unique visitor once', () => {
+    const uniqueVisitorCount = countUniqueVisitors(testURLs['i3BoGr'].visits);
+    const expectedOutput = 2;
+
+    assert.equal(uniqueVisitorCount, expectedOutput);
   });
 });

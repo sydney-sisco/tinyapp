@@ -27,4 +27,18 @@ const getURLsByUser = (userID, urlDatabase) => {
   return userURLs;
 };
 
-module.exports = { getUserByEmail, generateRandomString, getURLsByUser };
+const countUniqueVisitors = (visits) => {
+  let uniqueVisitorCount = 0;
+  const visitors = [];
+
+  for (const visit of visits) {
+    if (!visitors.includes(visit.visitorID)) {
+      visitors.push(visit.visitorID);
+      uniqueVisitorCount++;
+    }
+  }
+
+  return uniqueVisitorCount;
+};
+
+module.exports = { getUserByEmail, generateRandomString, getURLsByUser, countUniqueVisitors };
