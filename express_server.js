@@ -312,16 +312,6 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-// TODO: remove this
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-// TODO: remove this
-app.get("/users.json", (req, res) => {
-  res.json(users);
-});
-
 // route used to redirect short URLs to long URLs
 app.get("/u/:shortURL", (req, res) => {
 
