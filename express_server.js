@@ -173,23 +173,26 @@ const isValidUser = (userID) => {
   return false;
 };
 
-// POST request for new URL
+// URLs POST - creates a new URL
 app.post("/urls", (req, res) => {
 
-  if (req.session.user_id && isValidUser(req.session.user_id)) {
-    const shortURL = generateRandomString();
-    urlDatabase[shortURL] = {
-      longURL: req.body.longURL,
-      userID: req.session.user_id
-    };
-    res.redirect(`/urls/${shortURL}`);
-  } else {
+  // if user is not logged in, show error
+  if (!req.session.user_id) {
     const templateVars = {
       user: users[req.session.user_id],
       errorString: 'Sorry, you do not have access to this.'
     };
     res.status(403).render('error', templateVars);
+    return;
   }
+
+  // create a new URL and add it to the database
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = {
+    longURL: req.body.longURL,
+    userID: req.session.user_id
+  };
+  res.redirect(`/urls/${shortURL}`);
 });
 
 const urlBelongsToUser = (userID, shortURL) => {
