@@ -203,7 +203,7 @@ app.post("/urls", (req, res) => {
 });
 
 // Edit a URL
-app.post("/urls/:shortURL", (req, res) => {
+app.put("/urls/:shortURL", (req, res) => {
 
   // if the user is not logged in, show error
   if (!req.session.user_id) {
