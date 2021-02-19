@@ -200,7 +200,7 @@ app.post("/urls/:shortURL", (req, res) => {
   }
   
   // if the user does not own the URL, show error
-  if (!getURLsByUser(req.session.user_id, urlDatabase).hasOwnProperty(req.params.shortURL)) {
+  if (!getURLsByUser(req.session.user_id, urlDatabase)[req.params.shortURL]) {
     const templateVars = {
       user: users[req.session.user_id],
       errorString: 'Sorry, you do not have access to this.'
@@ -228,7 +228,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 
   // if the user does not own the URL, show error
-  if (!getURLsByUser(req.session.user_id, urlDatabase).hasOwnProperty(req.params.shortURL)) {
+  if (!getURLsByUser(req.session.user_id, urlDatabase)[req.params.shortURL]) {
     const templateVars = {
       user: users[req.session.user_id],
       errorString: 'Sorry, you do not have access to this.'
@@ -282,7 +282,7 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 
   // if the user does not own the URL, show error
-  if (!getURLsByUser(req.session.user_id, urlDatabase).hasOwnProperty(req.params.shortURL)) {
+  if (!getURLsByUser(req.session.user_id, urlDatabase)[req.params.shortURL]) {
     const templateVars = {
       user: users[req.session.user_id],
       errorString: 'Sorry, you do not have access to this.'
