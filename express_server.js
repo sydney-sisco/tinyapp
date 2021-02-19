@@ -334,22 +334,19 @@ app.get("/u/:shortURL", (req, res) => {
   }
 
   // analytics
-  //if the user doesn't have a visitorID cookie, set one and log the visit
+  //if the user doesn't have a visitorID cookie, set one
   if (!req.session.visitorID) {
     const newVisitorID = generateRandomString();
     req.session.visitorID = newVisitorID;
-    urlDatabase[req.params.shortURL].visits.push({
-      date: Date.now(),
-      visitorID: newVisitorID
-    });
-  } else {
-    urlDatabase[req.params.shortURL].visits.push({
-      date: Date.now(),
-      visitorID: req.session.visitorID
-    });
   }
+
+  //log the visit
+  urlDatabase[req.params.shortURL].visits.push({
+    date: Date.now(),
+    visitorID: req.session.visitorID
+  });
   
-  // redirect to the corresponding long URL
+  // finally, redirect to the corresponding long URL
   let longURL = urlDatabase[req.params.shortURL].longURL;
   if (longURL.substring(0, 4) !== 'http') {
     longURL = 'http://' + longURL;
