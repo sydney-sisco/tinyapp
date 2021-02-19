@@ -24,6 +24,10 @@ app.use(cookieSession({
 // use bcrypt to hash passwords
 const bcrypt = require('bcrypt');
 
+// set up methodOverride to override with POST having ?_method=DELETE
+var methodOverride = require('method-override')
+app.use(methodOverride('_method'))
+
 const { getUserByEmail, generateRandomString, getURLsByUser } = require('./helpers');
 
 // database objects
