@@ -195,17 +195,6 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-const urlBelongsToUser = (userID, shortURL) => {
-  const urls = getURLsByUser(userID, urlDatabase);
-
-  for (const url in urls) {
-    if (url === shortURL) {
-      return true;
-    }
-  }
-  return false;
-};
-
 // Edit a URL
 app.post("/urls/:shortURL", (req, res) => {
 
