@@ -25,8 +25,8 @@ app.use(cookieSession({
 const bcrypt = require('bcrypt');
 
 // set up methodOverride to override with POST having ?_method=DELETE
-var methodOverride = require('method-override')
-app.use(methodOverride('_method'))
+var methodOverride = require('method-override');
+app.use(methodOverride('_method'));
 
 const { getUserByEmail, generateRandomString, getURLsByUser } = require('./helpers');
 
@@ -231,7 +231,7 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 // Delete a URL
-app.post("/urls/:shortURL/delete", (req, res) => {
+app.delete("/urls/:shortURL", (req, res) => {
 
   // if the user is not logged in, show error
   if (!req.session.user_id) {
