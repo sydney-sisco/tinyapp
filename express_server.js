@@ -33,7 +33,7 @@ const users = {};
 
 // requests to root should be redirected
 app.get("/", (req, res) => {
-  if (!isValidUser(req.session.user_id)) {
+  if (!req.session.user_id) {
     res.redirect('/login');
     return;
   }
@@ -163,15 +163,6 @@ app.get("/urls", (req, res) => {
 
   res.render("urls_index", templateVars);
 });
-
-const isValidUser = (userID) => {
-  for (const user in users) {
-    if (users[userID]) {
-      return true;
-    }
-  }
-  return false;
-};
 
 // create a new URL
 app.post("/urls", (req, res) => {
