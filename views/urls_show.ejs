@@ -24,6 +24,24 @@
         </div>
       </form>
     </div>
+    <div class="card text-center">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Date Created</th>
+            <th scope="col">Clicks</th>
+            <th scope="col">Unique Visitors</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= new Date(url.dateCreated) %></td>
+            <td><%= url.totalVisits %></td>
+            <td><%= url.uniqueVisitors %></td>
+          </tr>
+        </tbody>
+      </table> 
+    </div>
   </div>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
