@@ -34,8 +34,8 @@
               <td><a href="/urls/<%= url %>" class="btn btn-outline-primary" role="button">Edit</a></td>
               <td><form method="POST" action="/urls/<%= url %>?_method=DELETE"><button type="submit" class="btn btn-outline-danger">Delete</button></form></td>
               <td><%= new Date(urls[url].dateCreated) %></td>
-              <td><%= urls[url].totalVisits %></td>
-              <td><%= urls[url].uniqueVisitors %></td>
+              <td><%= urls[url].visits.length %></td>
+              <td><%= countUniqueVisitors(urls[url].visits) %></td>
             </tr>
           <% } %>
         </tbody>

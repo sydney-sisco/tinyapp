@@ -25,10 +25,10 @@ app.use(cookieSession({
 const bcrypt = require('bcrypt');
 
 // set up methodOverride to override with POST having ?_method=DELETE
-var methodOverride = require('method-override');
+const methodOverride = require('method-override');
 app.use(methodOverride('_method'));
 
-const { getUserByEmail, generateRandomString, getURLsByUser } = require('./helpers');
+const { getUserByEmail, generateRandomString, getURLsByUser, countUniqueVisitors } = require('./helpers');
 
 // database objects
 const urlDatabase = {};
@@ -173,6 +173,7 @@ app.get("/urls", (req, res) => {
 
   // render the page
   const templateVars = {
+    countUniqueVisitors,
     user: users[req.session.user_id],
     urls: getURLsByUser(req.session.user_id, urlDatabase)
   };
@@ -199,8 +200,7 @@ app.post("/urls", (req, res) => {
     longURL: req.body.longURL,
     userID: req.session.user_id,
     dateCreated: Date.now(),
-    totalVisits: 0,
-    uniqueVisitors: 0
+    visits: []
   };
   res.redirect(`/urls/${shortURL}`);
 });
@@ -312,6 +312,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
   // render the page
   const templateVars = {
+    countUniqueVisitors,
     user: users[req.session.user_id],
     shortURL: req.params.shortURL,
     url: urlDatabase[req.params.shortURL],
@@ -332,6 +333,22 @@ app.get("/u/:shortURL", (req, res) => {
     return;
   }
 
+  // analytics
+  //if the user doesn't have a visitorID cookie, set one and log the visit
+  if (!req.session.visitorID) {
+    const newVisitorID = generateRandomString();
+    req.session.visitorID = newVisitorID;
+    urlDatabase[req.params.shortURL].visits.push({
+      date: Date.now(),
+      visitorID: newVisitorID
+    });
+  } else {
+    urlDatabase[req.params.shortURL].visits.push({
+      date: Date.now(),
+      visitorID: req.session.visitorID
+    });
+  }
+  
   // redirect to the corresponding long URL
   let longURL = urlDatabase[req.params.shortURL].longURL;
   if (longURL.substring(0, 4) !== 'http') {

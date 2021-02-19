@@ -36,11 +36,30 @@
         <tbody>
           <tr>
             <td><%= new Date(url.dateCreated) %></td>
-            <td><%= url.totalVisits %></td>
-            <td><%= url.uniqueVisitors %></td>
+            <td><%= url.visits.length %></td>
+            <td><%= countUniqueVisitors(url.visits) %></td>
           </tr>
         </tbody>
       </table> 
+      <% if (url.visits.length) { %>
+        <h3>Visit Log</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Visitor ID</th>
+            <th scope="col">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(let visit of url.visits) { %>
+            <tr>
+              <td><%= visit.visitorID %></td>
+              <td><%= new Date(visit.date) %></td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+      <% } %>
     </div>
   </div>
   <!-- Bootstrap JS -->
