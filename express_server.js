@@ -173,7 +173,7 @@ const isValidUser = (userID) => {
   return false;
 };
 
-// URLs POST - creates a new URL
+// create a new URL
 app.post("/urls", (req, res) => {
 
   // if user is not logged in, show error
@@ -206,22 +206,34 @@ const urlBelongsToUser = (userID, shortURL) => {
   return false;
 };
 
-// Add a POST route that edits a URL resource
+// Edit a URL
 app.post("/urls/:shortURL", (req, res) => {
 
-  if (req.session.user_id && isValidUser(req.session.user_id) && urlBelongsToUser(req.session.user_id, req.params.shortURL)) {
-    urlDatabase[req.params.shortURL] = {
-      longURL: req.body.longURL,
-      userID: req.session.user_id
+  // if the user is not logged in, show error
+  if (!req.session.user_id) {
+    const templateVars = {
+      user: users[req.session.user_id],
+      errorString: 'You must be logged in to do this.'
     };
-    res.redirect(`/urls`);
-  } else {
+    res.status(403).render('error', templateVars);
+    return;
+  }
+  
+  // if the user does not own the URL, show error
+  if (!(req.params.shortURL in getURLsByUser(req.session.user_id))) {
     const templateVars = {
       user: users[req.session.user_id],
       errorString: 'Sorry, you do not have access to this.'
     };
     res.status(403).render('error', templateVars);
+    return;
   }
+
+  // edit the URL and redirect user
+  urlDatabase[req.params.shortURL] = {
+    longURL: req.body.longURL,
+  };
+  res.redirect(`/urls`);
 });
 
 // Add a POST route that removes a URL resource
