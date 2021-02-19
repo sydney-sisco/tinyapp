@@ -267,15 +267,45 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+// show details of a specific URL
 app.get("/urls/:shortURL", (req, res) => {
-  const urls = getURLsByUser(req.session.user_id, urlDatabase);
+
+  // if the user is not logged in, show error
+  if (!req.session.user_id) {
+    const templateVars = {
+      user: users[req.session.user_id],
+      errorString: 'You must be logged in to do this.'
+    };
+    res.status(403).render('error', templateVars);
+    return;
+  }
   
+  // if the URL does not exist, show error
+  if (!urlDatabase[req.params.shortURL]) {
+    const templateVars = {
+      user: users[req.session.user_id],
+      errorString: 'This URL does not exist.'
+    };
+    res.status(404).render('error', templateVars);
+    return;
+  }
+
+  // if the user does not own the URL, show error
+  if (!getURLsByUser(req.session.user_id, urlDatabase).hasOwnProperty(req.params.shortURL)) {
+    const templateVars = {
+      user: users[req.session.user_id],
+      errorString: 'Sorry, you do not have access to this.'
+    };
+    res.status(403).render('error', templateVars);
+    return;
+  }
+
+  // render the page
   const templateVars = {
     user: users[req.session.user_id],
     shortURL: req.params.shortURL,
-    url: urls[req.params.shortURL],
+    url: urlDatabase[req.params.shortURL],
   };
-
   res.render("urls_show", templateVars);
 });
 
