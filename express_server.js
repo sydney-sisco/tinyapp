@@ -319,18 +319,25 @@ app.get("/users.json", (req, res) => {
   res.json(users);
 });
 
+// route used to redirect short URLs to long URLs
 app.get("/u/:shortURL", (req, res) => {
-  if (urlDatabase[req.params.shortURL]) {
-    const longURL = urlDatabase[req.params.shortURL].longURL;
-    res.redirect(longURL);
-  } else {
+
+  // if the URL does not exist, show error
+  if (!urlDatabase[req.params.shortURL]) {
     const templateVars = {
-      user: users[req.session.user_id]
+      user: users[req.session.user_id],
+      errorString: 'This URL does not exist.'
     };
-    res.status(404).render('error_404', templateVars);
+    res.status(404).render('error', templateVars);
+    return;
   }
+
+  // redirect to the corresponding long URL
+  const longURL = urlDatabase[req.params.shortURL].longURL;
+  res.redirect(longURL);
 });
 
+// start the server!
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
